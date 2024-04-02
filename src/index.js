@@ -74,11 +74,11 @@ app.post("/login", async (req,res) => {
             res.redirect('/home');
         }
         else {
-            res.render("signup", { errorMessage: "Sai thông tin đăng nhập"});
+            res.render("login", { errorMessage: "Sai thông tin đăng nhập"});
         }
     }
     catch{
-        res.render("signup", { errorMessage: "Sai thông tin đăng nhập"});
+        res.render("login", { errorMessage: "Sai thông tin đăng nhập"});
     }
 });
 
