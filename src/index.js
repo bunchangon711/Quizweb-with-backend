@@ -27,11 +27,19 @@ app.use(express.static("public"));
 
 //Cấu hình route
 app.get("/", (req, res) => {
-    res.render("login");
+    if (!req.session.loggedIn) {
+        res.render("login");
+    } else {
+        res.render("home");
+    }
 });
 
 app.get("/login", (req, res) => {
-    res.render("login"); 
+    if (req.session.loggedIn) {
+        res.render("home");
+    } else {
+        res.render("login");
+    }
 });
 
 app.get("/signup", (req,res) => {
