@@ -1,11 +1,22 @@
 const express = require('express');
 const path = require('path');
 const bcrypt = require('bcrypt');
-const collection = require("./config");
+const user = require("./logindb");
+const exam = require("./examdb");
 
 const app = express();
 //convert data into json format
 app.use(express.json());
+
+//Cấu hình session
+const session = require('express-session');
+
+app.use(session({
+ secret: 'your_secret_key',
+ resave: false,
+ saveUninitialized: true,
+ cookie: { secure: false } // Set to true if your app is served over HTTPS
+}));
 
 app.use(express.urlencoded({extended: false}));
 
@@ -28,7 +39,25 @@ app.get("/signup", (req,res) => {
 });
 
 app.get("/home", (req,res) => {
-    res.render("home");
+    if (req.session.loggedIn) {
+        res.render("home");
+    } else {
+        res.redirect("/login");
+    }
+});
+
+app.get("/exam", (req,res) => {
+    res.render("exam");
+});
+
+app.get("/result", (req,res) => {
+    res.render("result");
+});
+
+//Đăng xuất
+app.get("/logout", (req, res) => {
+    req.session.loggedIn = false;
+    res.redirect("/login");
 });
 
 //Register user
@@ -46,7 +75,7 @@ app.post("/signup", async (req,res) => {
         }
 
         //check if the user already exists
-        const existingUser = await collection.findOne({name: data.name});
+        const existingUser = await user.findOne({name: data.name});
         if(existingUser) {
             res.render("signup", { errorMessage: "Tên tài khoản đã tồn tại. Hãy thử tên tài khoản khác"});
         }
@@ -56,7 +85,7 @@ app.post("/signup", async (req,res) => {
             const hashedPassword = await bcrypt.hash(data.password, saltRounds);
 
             data.password = hashedPassword;
-            const userdata = await collection.insertMany(data);
+            const userdata = await user.insertMany(data);
             console.log(userdata);
             res.render("login");
         }
@@ -66,11 +95,13 @@ app.post("/signup", async (req,res) => {
 //Login User
 app.post("/login", async (req,res) => {
     try{
-        const check = await collection.findOne({name: req.body.username});
+        const check = await user.findOne({name: req.body.username});
 
         //compare hashed passord with input
         const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
         if(isPasswordMatch && check){
+            // Set loggedIn to true in the session
+            req.session.loggedIn = true;
             res.redirect('/home');
         }
         else {

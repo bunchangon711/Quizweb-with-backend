@@ -1,15 +1,15 @@
 const mongoose = require("mongoose");
-const connect = mongoose.connect("mongodb://localhost:27017/Quiz-login");
+const connect = mongoose.connect("mongodb://localhost:27017/QuizWeb");
 
 //check db connected or not
 connect.then(() => {
-    console.log("Database connected successfully");
+    console.log("User database connected successfully");
 })
 .catch(() => {
-    console.log("Database cannot be connected");
+    console.log("User database cannot be connected");
 })
 
-//Create a schema
+//Schema for login
 const LoginSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -26,6 +26,7 @@ const LoginSchema = new mongoose.Schema({
 });
 
 //collection Part
-const collection = new mongoose.model("users", LoginSchema);
+const user = new mongoose.model("users", LoginSchema);
 
-module.exports = collection;
+module.exports = user;
+
