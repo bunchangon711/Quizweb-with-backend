@@ -6,6 +6,7 @@
     <title>Trang Chính</title>
     <link rel="stylesheet" href="/home.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&display=swap" rel="stylesheet">
 </head>
 <body>
     <header>
@@ -15,15 +16,75 @@
         </a>
     </header>
     <section class="search-filter">
-        <input type="text" id="search" placeholder="Tìm kiếm kỳ thi...">
-        <select id="status">
-            <option value="all">Tất cả</option>
-            <option value="available">Truy cập tự do</option>
-            <option value="time-specific">Yêu cầu thời gian cụ thể</option>
-        </select>
+        <form action="/search" method="GET">
+            <input type="text" id="search-name" name="name" placeholder="Tìm kiếm kỳ thi...">
+            <select id="search-status" name="status">
+                <option value="">Tất cả</option>
+                <option value="Open">Truy cập tự do</option>
+                <option value="Closed">Yêu cầu thời gian cụ thể</option>
+            </select>
+        </form>
     </section>
-    <section class="exams-list">
-        <!-- Danh sách kỳ thi sẽ được thêm vào ở đây -->
+    <section class="exams-list" style="font-size: 20px;">
+        <% exams.forEach(exam => { %>
+            <div class="exam-item">
+                <img src="images/Quiz_icon.png" alt="Icon" class="icon-image" style="scale: 50%; margin-top: -160px; margin-bottom: -60px; margin-left: +30px;">
+                <h3 style="font-size: 28px;"><%= exam.name %></h3>
+                <p>Status: <%= exam.status %></p>
+                <p>Start Time: <%= exam.timeStart %></p>
+                <p>End Time: <%= exam.timeEnd %></p>
+                <% if (exam.status !== 'Closed') { %>
+                    <a href="/start-exam/<%= exam._id %>" class="start-btn">Bắt đầu làm</a>
+                <% } else { %>
+                    <a href="#" class="start-btn disabled">Bắt đầu làm</a>
+                <% } %>
+            </div>
+        <% }); %>
     </section>
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchName = document.getElementById('search-name');
+        const searchStatus = document.getElementById('search-status');
+    
+        let searchTimeout;
+
+        function searchExams() {
+            clearTimeout(searchTimeout); // Hủy timeout hiện tại nếu có
+            searchTimeout = setTimeout(function() {
+                const name = searchName.value;
+                const status = document.getElementById('search-status').value;
+                const query = new URLSearchParams({ name, status }).toString();
+                window.location.href = `/search?${query}`;
+            }, 200); // Thêm delay 0.7s
+        }
+
+        // Lưu giá trị của ô search vào session storage khi người dùng thay đổi giá trị
+        searchName.addEventListener('input', function() {
+            sessionStorage.setItem('searchName', this.value);
+            searchExams(); // Gọi hàm searchExams khi người dùng nhập vào ô search
+        });
+
+        // Lấy giá trị từ session storage và đặt nó vào ô search khi trang tải lại
+        const savedSearchName = sessionStorage.getItem('searchName');
+        if (savedSearchName) {
+            searchName.value = savedSearchName;
+        }
+
+        // Lưu giá trị của select vào session storage khi người dùng thay đổi giá trị
+        searchStatus.addEventListener('change', function() {
+            sessionStorage.setItem('searchStatus', this.value);
+        });
+
+        // Lấy giá trị từ session storage và đặt nó vào select khi trang tải lại
+        const savedSearchStatus = sessionStorage.getItem('searchStatus');
+        if (savedSearchStatus) {
+            searchStatus.value = savedSearchStatus;
+        }
+
+        searchName.addEventListener('keyup', searchExams);
+        searchStatus.addEventListener('change', searchExams);
+    });
+</script>

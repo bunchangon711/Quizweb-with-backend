@@ -26,17 +26,29 @@ app.set('view engine', 'ejs');
 app.use(express.static("public"));
 
 //Cấu hình route
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
     if (!req.session.loggedIn) {
         res.render("login");
     } else {
-        res.render("home");
+        try {
+            const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
+            res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
     }
 });
 
-app.get("/login", (req, res) => {
-    if (req.session.loggedIn) {
-        res.render("home");
+app.get("/login", async (req, res) => {
+    if (req.session.loggedIn) {     //Nếu chưa đăng xuất sẽ chuyển thẳng đến home
+        try {           
+            const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
+            res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
     } else {
         res.render("login");
     }
@@ -46,14 +58,49 @@ app.get("/signup", (req,res) => {
     res.render("signup");
 });
 
-app.get("/home", (req,res) => {
+
+//Home api
+app.get("/home", async (req, res) => {
     if (req.session.loggedIn) {
-        res.render("home");
+       try {
+           const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
+           res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+       } catch (err) {
+           console.error(err);
+           res.status(500).send('Server Error');
+       }
     } else {
-        res.redirect("/login");
+       res.redirect("/login");
+    }
+   });
+
+   app.get("/search", async (req, res) => { //Tìm kiếm kỳ thi
+    let query = {};
+    if (req.query.name) {
+        query.name = { $regex: req.query.name, $options: 'i' };
+    }
+    if (req.query.status && req.query.status !== '') {
+        query.status = req.query.status;
+    }
+
+    try {
+        const exams = await exam.find(query);
+        res.render("home", { exams: exams });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
     }
 });
 
+app.get("/start-exam/:id", async (req, res) => {
+    // Lấy thông tin kỳ thi dựa trên ID
+    const exam = await exam.findById(req.params.id);
+    // Render trang kỳ thi với thông tin kỳ thi
+    res.render("exam", { exam: exam });
+});
+
+
+//Exam api
 app.get("/exam", (req,res) => {
     if (req.session.loggedIn) {
         res.render("exam");
@@ -62,6 +109,8 @@ app.get("/exam", (req,res) => {
     }
 });
 
+
+//Result api
 app.get("/result", (req,res) => {
     if (req.session.loggedIn) {
         res.render("result");
@@ -128,6 +177,7 @@ app.post("/login", async (req,res) => {
         res.render("login", { errorMessage: "Sai thông tin đăng nhập"});
     }
 });
+
 
 const port = 3000;
 app.listen(port, () => {

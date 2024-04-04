@@ -1,0 +1,40 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #333;
+    margin: 0;
+    padding: 0;
+}
+
+.quiz-container {
+    padding: 50px;
+    line-height: 2.0; 
+}
+
+.quiz-container h2 {
+    margin-top: 20px; 
+}
+
+footer {
+    background-color: #f00;
+    color: #fff;
+    padding: 5px;
+    text-align: center;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+}
+
+#submitBtn {
+    background-color: #f00;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+}
+
+@media (max-width: 768px) {
+    .quiz-container {
+        padding: 10px;
+    }
+}
