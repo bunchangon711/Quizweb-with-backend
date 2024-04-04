@@ -55,11 +55,19 @@ app.get("/home", (req,res) => {
 });
 
 app.get("/exam", (req,res) => {
-    res.render("exam");
+    if (req.session.loggedIn) {
+        res.render("exam");
+    } else {
+        res.redirect("/login");
+    }
 });
 
 app.get("/result", (req,res) => {
-    res.render("result");
+    if (req.session.loggedIn) {
+        res.render("result");
+    } else {
+        res.redirect("/login");
+    }
 });
 
 //Đăng xuất
