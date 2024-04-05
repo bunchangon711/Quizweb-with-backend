@@ -10,6 +10,13 @@
 <body>
     <div id="countdown"></div>
     <div id="countdownData" data-time="3600"></div>
+    <div id="questionGrid">
+        <% exam.questions.forEach((question, index) => { %>
+            <div class="grid-item" data-index="<%= index %>">
+                <%= index + 1 %>
+            </div>
+        <% }); %>
+    </div>
     <button id="scrollToTop" class="scroll-button">
         <i class="fas fa-chevron-up"></i>
     </button>
@@ -20,7 +27,7 @@
         <form id="quiz-form" action="/submit-exam/<%= exam._id %>" method="post">
             <% exam.questions.forEach((question, index) => { %>
                 <div class="question" style="font-size: 25px; margin-top: 40px;">
-                    <p><%= question.questionText %></p>
+                    <p><%= index + 1 %>. <%= question.questionText %></p>
                     <% question.answerOptions.forEach((option, optionIndex) => { %>
                         <div style="margin-bottom: 20px;">
                             <input type="radio" name="question-<%= index %>" value="<%= optionIndex %>">
@@ -61,11 +68,32 @@
     const scrollToBottomButton = document.getElementById('scrollToBottom');
 
     scrollToTopButton.addEventListener('click', function() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth",
+        });
     });
 
     scrollToBottomButton.addEventListener('click', function() {
-        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+        window.scrollTo({
+            top: document.body.scrollHeight,
+            behavior: "smooth",
+        });
     });
+
+    const gridItems = document.querySelectorAll('.grid-item');
+    gridItems.forEach(item => {
+        item.addEventListener('click', function() {
+            const index = parseInt(this.getAttribute('data-index'), 10);
+            scrollToQuestion(index);
+        });
+    });
+
+    function scrollToQuestion(index) {
+        const questionElement = document.querySelector(`.question:nth-child(${index + 1})`);
+        if (questionElement) {
+            questionElement.scrollIntoView({ behavior: 'smooth' });
+        }
+    }
 });
 </script>
