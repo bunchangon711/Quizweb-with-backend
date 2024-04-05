@@ -25,6 +25,13 @@ app.set('view engine', 'ejs');
 //static file
 app.use(express.static("public"));
 
+function requireLogin(req, res, next) {
+    if (!req.session.loggedIn) {
+        return res.redirect('/login');
+    }
+    next();
+}
+
 //Cấu hình route
 app.get("/", async (req, res) => {
     if (!req.session.loggedIn) {
@@ -60,7 +67,8 @@ app.get("/signup", (req,res) => {
 
 
 //Home api
-app.get("/home", async (req, res) => {
+app.get("/home", requireLogin, async (req, res) => {
+    res.locals.clearSessionStorage = true;
     if (req.session.loggedIn) {
        try {
            const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
@@ -74,7 +82,7 @@ app.get("/home", async (req, res) => {
     }
    });
 
-   app.get("/search", async (req, res) => { //Tìm kiếm kỳ thi
+   app.get("/search", requireLogin, async (req, res) => { //Tìm kiếm kỳ thi
     let query = {};
     if (req.query.name) {
         query.name = { $regex: req.query.name, $options: 'i' };
@@ -92,7 +100,7 @@ app.get("/home", async (req, res) => {
     }
 });
 
-app.get("/start-exam/:id", async (req, res) => {
+app.get("/start-exam/:id", requireLogin, async (req, res) => {
     // Lấy thông tin kỳ thi dựa trên ID
     const exam = await exam.findById(req.params.id);
     // Render trang kỳ thi với thông tin kỳ thi
@@ -101,7 +109,7 @@ app.get("/start-exam/:id", async (req, res) => {
 
 
 //Exam api
-app.get("/exam", (req,res) => {
+app.get("/exam", requireLogin, (req,res) => {
     if (req.session.loggedIn) {
         res.render("exam");
     } else {
@@ -111,7 +119,7 @@ app.get("/exam", (req,res) => {
 
 
 //Result api
-app.get("/result", (req,res) => {
+app.get("/result", requireLogin, (req,res) => {
     if (req.session.loggedIn) {
         res.render("result");
     } else {

@@ -10,7 +10,13 @@
 </head>
 <body>
     <header>
-        <h1>Danh Sách Kỳ Thi</h1>
+        <div class="header-content">
+            <h1>PQUIZ</h1>
+            <nav>
+                <a href="/home" class="nav-item">Danh sách kỳ thi</a>
+                <a href="/result" class="nav-item">Kết quả</a>
+            </nav>
+        </div>
         <a href="/logout" class="logout-icon">
             <i class="fas fa-sign-out-alt"></i>
         </a>
@@ -83,7 +89,7 @@
         if (savedSearchStatus) {
             searchStatus.value = savedSearchStatus;
         }
-
+        
         searchName.addEventListener('keyup', searchExams);
         searchStatus.addEventListener('change', searchExams);
     });
