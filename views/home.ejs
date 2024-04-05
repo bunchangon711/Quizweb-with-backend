@@ -37,8 +37,8 @@
                 <img src="images/Quiz_icon.png" alt="Icon" class="icon-image" style="scale: 50%; margin-top: -160px; margin-bottom: -60px; margin-left: +30px;">
                 <h3 style="font-size: 28px;"><%= exam.name %></h3>
                 <p>Status: <%= exam.status %></p>
-                <p>Start Time: <%= exam.timeStart %></p>
-                <p>End Time: <%= exam.timeEnd %></p>
+                <p>Start Time: <span id="startTime-<%= exam._id %>"><%= formatTime(new Date(exam.timeStart)) %></span></p>
+                <p>End Time: <span id="endTime-<%= exam._id %>"><%= formatTime(new Date(exam.timeEnd)) %></span></p>
                 <% if (exam.status !== 'Closed') { %>
                     <a href="/start-exam/<%= exam._id %>" class="start-btn">Bắt đầu làm</a>
                 <% } else { %>
@@ -47,6 +47,10 @@
             </div>
         <% }); %>
     </section>
+     <!-- Thêm thẻ div để lưu dữ liệu về các exam dưới dạng JSON -->
+     <div id="examsData" data-exams="<%= JSON.stringify(exams) %>"></div>
+     <!-- Liên kết file JavaScript riêng biệt -->
+     <script src="/home-script.js"></script>
 </body>
 </html>
 
@@ -64,7 +68,7 @@
                 const status = document.getElementById('search-status').value;
                 const query = new URLSearchParams({ name, status }).toString();
                 window.location.href = `/search?${query}`;
-            }, 200); // Thêm delay 0.7s
+            }, 200); 
         }
 
         // Lưu giá trị của ô search vào session storage khi người dùng thay đổi giá trị

@@ -32,6 +32,13 @@ function requireLogin(req, res, next) {
     next();
 }
 
+function formatTime(time) {
+    const hours = Math.floor(time / 3600000).toString().padStart(2, '0');
+    const minutes = Math.floor((time % 3600000) / 60000).toString().padStart(2, '0');
+    const seconds = Math.floor((time % 60000) / 1000).toString().padStart(2, '0');
+    return `${hours}:${minutes}:${seconds}`;
+}
+
 //Cấu hình route
 app.get("/", async (req, res) => {
     if (!req.session.loggedIn) {
@@ -72,7 +79,7 @@ app.get("/home", requireLogin, async (req, res) => {
     if (req.session.loggedIn) {
        try {
            const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
-           res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+           res.render('home', { exams: exams, formatTime: formatTime }); // Truyền dữ liệu vào trang home
        } catch (err) {
            console.error(err);
            res.status(500).send('Server Error');
@@ -93,7 +100,7 @@ app.get("/home", requireLogin, async (req, res) => {
 
     try {
         const exams = await exam.find(query);
-        res.render("home", { exams: exams });
+        res.render('home', { exams: exams, formatTime: formatTime });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -101,12 +108,9 @@ app.get("/home", requireLogin, async (req, res) => {
 });
 
 app.get("/start-exam/:id", requireLogin, async (req, res) => {
-    // Lấy thông tin kỳ thi dựa trên ID
-    const exam = await exam.findById(req.params.id);
-    // Render trang kỳ thi với thông tin kỳ thi
-    res.render("exam", { exam: exam });
+    const examData = await exam.findById(req.params.id);
+    res.render("exam", { exam: examData });
 });
-
 
 //Exam api
 app.get("/exam", requireLogin, (req,res) => {
@@ -117,14 +121,29 @@ app.get("/exam", requireLogin, (req,res) => {
     }
 });
 
+//API xử lí việc nộp bài
+app.post("/submit-exam/:id", requireLogin, async (req, res) => {    
+    // Lấy dữ liệu từ form
+    const answers = req.body;
+    // Lấy thông tin bài thi dựa trên ID
+    const exam = await exam.findById(req.params.id);
+    // So sánh câu trả lời với câu trả lời đúng
+    // (Đây là một ví dụ đơn giản, bạn cần thực hiện logic phức tạp hơn dựa trên yêu cầu của bạn)
+    let score = 0;
+    exam.questions.forEach((question, index) => {
+        const userAnswerIndex = answers[`question-${index}`];
+        if (question.answerOptions[userAnswerIndex].isCorrectAnswer) {
+            score++;
+        }
+    });
+
+    // Hiển thị kết quả
+    res.render("result", { score: score });
+});
 
 //Result api
 app.get("/result", requireLogin, (req,res) => {
-    if (req.session.loggedIn) {
         res.render("result");
-    } else {
-        res.redirect("/login");
-    }
 });
 
 //Đăng xuất

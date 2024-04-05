@@ -5,15 +5,67 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Trang Bài Thi</title>
     <link rel="stylesheet" href="/exam.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    <div id="countdown"></div>
+    <div id="countdownData" data-time="3600"></div>
+    <button id="scrollToTop" class="scroll-button">
+        <i class="fas fa-chevron-up"></i>
+    </button>
+    <button id="scrollToBottom" class="scroll-button">
+        <i class="fas fa-chevron-down"></i>
+    </button>
     <section class="quiz-container">
-        
+        <form id="quiz-form" action="/submit-exam/<%= exam._id %>" method="post">
+            <% exam.questions.forEach((question, index) => { %>
+                <div class="question" style="font-size: 25px; margin-top: 40px;">
+                    <p><%= question.questionText %></p>
+                    <% question.answerOptions.forEach((option, optionIndex) => { %>
+                        <div style="margin-bottom: 20px;">
+                            <input type="radio" name="question-<%= index %>" value="<%= optionIndex %>">
+                            <label><%= option.answerBody %></label>
+                        </div>
+                    <% }); %>
+                </div>
+            <% }); %>
+        </form>
     </section>
     <footer>
         <div id="timer"></div>
-        <button id="submitBtn">Nộp bài</button>
+        <button id="submitBtn" type="submit" form="quiz-form" style="width: 9%;">Nộp bài</button>
     </footer>
-    <script src="script.js"></script>
 </body>
 </html>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const countdownElement = document.getElementById('countdown');
+    const countdownData = document.getElementById('countdownData');
+    let timeLeft = parseInt(countdownData.dataset.time, 10);
+
+    const countdown = setInterval(function() {
+        if (timeLeft <= 0) {
+            clearInterval(countdown);
+            countdownElement.textContent = 'TIME\'S UP';
+            return;
+        }
+
+        const minutes = Math.floor(timeLeft / 60);
+        const seconds = timeLeft % 60;
+        countdownElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        timeLeft--;
+    }, 1000);
+
+    const scrollToTopButton = document.getElementById('scrollToTop');
+    const scrollToBottomButton = document.getElementById('scrollToBottom');
+
+    scrollToTopButton.addEventListener('click', function() {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    scrollToBottomButton.addEventListener('click', function() {
+        window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    });
+});
+</script>

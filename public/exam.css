@@ -6,9 +6,69 @@ body {
     padding: 0;
 }
 
+#countdown {
+    text-align: center;
+    position: fixed;
+    margin-right: 130px;
+    right: 0;
+    width: 130px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    font-size: 40px;
+}
+
+#scrollToTop{
+    margin-right: 25px;
+    position: fixed;
+    right: 0;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#scrollToBottom{
+    margin-bottom: 55px;
+    margin-right: 25px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+#scrollToTop:hover, #scrollToBottom:hover {
+    background-color: #0056b3;
+}
+
 .quiz-container {
-    padding: 50px;
-    line-height: 2.0; 
+    line-height: 1.5; 
+    margin-bottom: +80px;
+}
+
+.question {
+    margin-left: 50px;
+    width: 75%;
+    margin-bottom: 30px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.question p, input {
+    margin-left: +50px;
 }
 
 .quiz-container h2 {
@@ -16,7 +76,6 @@ body {
 }
 
 footer {
-    background-color: #f00;
     color: #fff;
     padding: 5px;
     text-align: center;
@@ -26,11 +85,15 @@ footer {
 }
 
 #submitBtn {
+    margin-bottom: +10px;
+    scale: 115%;
     background-color: #f00;
     color: #fff;
     padding: 10px 20px;
-    border: none;
     cursor: pointer;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
 @media (max-width: 768px) {
