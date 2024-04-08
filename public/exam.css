@@ -58,7 +58,7 @@ body {
 .grid-item:hover {
     background-color: #e0e0e0; /* Thay đổi màu nền khi hover */
     cursor: pointer; /* Thay đổi con trỏ thành con trỏ chỉ */
-    transform: scale(1.1); /* Phóng to grid item khi hover */
+    transform: scale(1.15); /* Phóng to grid item khi hover */
 }
 
 #scrollToTop{
@@ -90,6 +90,7 @@ body {
 }
 
 #scrollToTop:hover, #scrollToBottom:hover {
+    transform: scale(1.15);
     background-color: #0056b3;
 }
 
@@ -117,6 +118,10 @@ input[type="radio"] {
     height: 20px; /* Tăng kích thước của ô tích chọn */
 }
 
+input[type="radio"]:hover {
+    transform: scale(1.3);
+}
+
 .quiz-container h2 {
     margin-top: 20px; 
 }
@@ -136,6 +141,50 @@ input[type="radio"] {
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     margin-bottom: 10px;
+}
+
+#submit-btn:hover {
+    background-color: rgb(219, 36, 36);
+    transform: scale(1.1);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 17% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    height: 20%;
+    text-align: center;
+}
+
+.modal-content button {
+    margin-top: 30px;
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 10px 20px;
+    background-color: #f00;
+    color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content button:hover {
+    background-color: rgb(219, 36, 36);
+    transform: scale(1.1);
 }
 
 @media (max-width: 768px) {

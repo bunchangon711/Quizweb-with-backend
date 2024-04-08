@@ -22,7 +22,12 @@ const LoginSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    examResults: [{
+        examName: String,
+        correctAnswers: Number,
+        score: Number
+    }]
 });
 
 //collection Part

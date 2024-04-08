@@ -73,6 +73,20 @@ app.get("/signup", (req,res) => {
 });
 
 
+app.get("/find-user", async (req, res) => {
+    try {
+        const foundUser = await user.findOne({ name: "exampleUsername" });
+        if (foundUser) {
+            res.send("User found: " + foundUser.name);
+        } else {
+            res.send("User not found");
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
 //Home api
 app.get("/home", requireLogin, async (req, res) => {
     res.locals.clearSessionStorage = true;
@@ -141,8 +155,28 @@ app.post("/submit-exam/:id", requireLogin, async (req, res) => {
         }
     });
 
-    // Hiển thị kết quả
-    res.render("result", { score: score.toFixed(2), correctAnswers: correctAnswers, totalQuestions: checkQuestion.questions.length, exam: checkQuestion, answers: answers, userAnswers: userAnswers }); // Sử dụng toFixed(2) để làm tròn điểm số đến 2 chữ số thập phân
+    // Tìm kiếm người dùng trong database
+    const foundUser = await user.findOne({ name: req.session.username }); // Giả định bạn đã lưu tên người dùng vào session sau khi đăng nhập
+    if (foundUser) {
+        // Cập nhật kết quả bài thi cho người dùng
+        foundUser.examResults.push({
+            examName: checkQuestion.name,
+            correctAnswers: correctAnswers,
+            score: score.toFixed(2)
+        });
+        // Lưu dữ liệu vào database
+        try {
+            await foundUser.save();
+            // Hiển thị kết quả
+            res.render("result", { score: score.toFixed(2), correctAnswers: correctAnswers, totalQuestions: checkQuestion.questions.length, exam: checkQuestion, answers: answers, userAnswers: userAnswers }); // Sử dụng toFixed(2) để làm tròn điểm số đến 2 chữ số thập phân
+        } catch (error) {
+            console.error("Error saving user:", error);
+            res.status(500).send('Server Error');
+        }
+    } else {
+        // Người dùng không tồn tại, xử lý lỗi tương ứng
+        res.status(404).send('User not found');
+    }
 });
 
 //Result api
@@ -197,11 +231,13 @@ app.post("/login", async (req,res) => {
     try{
         const check = await user.findOne({name: req.body.username});
 
-        //compare hashed passord with input
+        // So sánh mật khẩu đã được hash với mật khẩu được nhập
         const isPasswordMatch = await bcrypt.compare(req.body.password, check.password);
         if(isPasswordMatch && check){
             // Set loggedIn to true in the session
             req.session.loggedIn = true;
+            // Lưu tên người dùng vào session sau khi đăng nhập thành công
+            req.session.username = check.name;
             res.redirect('/home');
         }
         else {
