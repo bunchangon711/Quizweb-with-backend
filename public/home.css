@@ -9,8 +9,6 @@ body {
 
 header {
     margin-top: -15px;
-    width: 142%;
-    margin-left: -370px;
     scale: 71%;
     background-color: #f00;
     color: #fff;
@@ -28,8 +26,7 @@ header h1 {
 }
 
 .header-content nav {
-    margin-left: 80px;
-    
+    margin-left: 80px;    
 }
 
 .nav-item {
@@ -118,4 +115,8 @@ header h1 {
     color: #fff;
     font-size: 24px;
     text-decoration: none;
+}
+
+.logout-icon:hover {
+    transform: scale(1.2);
 }

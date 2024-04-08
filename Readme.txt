@@ -1,0 +1,1 @@
+Run with nodemon src/index.js on terminal

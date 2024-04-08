@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trang Kết Quả</title>
+    <link rel="stylesheet" href="/result.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+    <div class="navigator">
+        <a href="/home" class="home-icon">
+            <i class="fas fa-home"></i>
+        </a>
+        <h2>KẾT QUẢ BÀI THI</h2>
+    </div>
+    <div class="results" style="font-size: 30px;">
+        <p>Số câu trả lời đúng: <span id="correctAnswers"><%= correctAnswers %></span></p>
+        <p>Tổng số câu: <span id="totalQuestions"><%= totalQuestions %></span></p>
+        <p>Kết quả: <span id="result"><%= correctAnswers %>/<%= totalQuestions %></span></p>
+        <p>Điểm số: <span id="score"><%= score %></span></p> 
+    </div>
+    <p style="font-size: 35px; margin-left: 190px;">Câu trả lời chi tiết:</p>
+    <section class="correct-answers">
+        <% exam.questions.forEach((question, index) => { %>
+            <div class="question" style="font-size: 25px; padding: 30px;">
+                <p style="margin-left: 30px;">
+                    <%= index + 1 %>. <%= question.questionText %>
+                    <% if (!userAnswers[index] || userAnswers[index].answer == 'Không trả lời') { %>
+                        <span class="incorrect">(Không trả lời)</span>
+                    <% } %>
+                </p>   
+
+                <% question.answerOptions.forEach((option, optionIndex) => { %>
+                    <p class="<%= option.isCorrectAnswer ? 'correct' : '' %>" style="margin-left: 80px;">
+                        <%= option.answerBody %>
+                        <% if (userAnswers[index] && userAnswers[index].answer == option.answerBody) { %>
+                            <span class="user-answer <%= option.isCorrectAnswer ? 'correct' : 'incorrect' %>">(Câu trả lời của bạn)</span>
+                        <% } %>
+                    </p>
+                <% }); %>
+                
+            </div>
+        <% }); %>
+    </section>
+</body>
+</html>

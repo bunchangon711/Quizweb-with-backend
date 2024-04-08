@@ -10,6 +10,7 @@
 <body>
     <div id="countdown"></div>
     <div id="countdownData" data-time="3600"></div>
+
     <div id="questionGrid">
         <% exam.questions.forEach((question, index) => { %>
             <div class="grid-item" data-index="<%= index %>">
@@ -17,12 +18,14 @@
             </div>
         <% }); %>
     </div>
+
     <button id="scrollToTop" class="scroll-button">
         <i class="fas fa-chevron-up"></i>
     </button>
     <button id="scrollToBottom" class="scroll-button">
         <i class="fas fa-chevron-down"></i>
     </button>
+
     <section class="quiz-container">
         <form id="quiz-form" action="/submit-exam/<%= exam._id %>" method="post">
             <% exam.questions.forEach((question, index) => { %>
@@ -38,10 +41,8 @@
             <% }); %>
         </form>
     </section>
-    <footer>
-        <div id="timer"></div>
-        <button id="submitBtn" type="submit" form="quiz-form" style="width: 9%;">Nộp bài</button>
-    </footer>
+
+    <button id="submit-btn" type="submit" form="quiz-form" style="width: 9%;">Nộp bài</button>
 </body>
 </html>
 

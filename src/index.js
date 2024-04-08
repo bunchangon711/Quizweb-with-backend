@@ -121,29 +121,37 @@ app.get("/exam", requireLogin, (req,res) => {
     }
 });
 
-//API xử lí việc nộp bài
 app.post("/submit-exam/:id", requireLogin, async (req, res) => {    
     // Lấy dữ liệu từ form
     const answers = req.body;
     // Lấy thông tin bài thi dựa trên ID
-    const exam = await exam.findById(req.params.id);
+    const checkQuestion = await exam.findById(req.params.id);
     // So sánh câu trả lời với câu trả lời đúng
-    // (Đây là một ví dụ đơn giản, bạn cần thực hiện logic phức tạp hơn dựa trên yêu cầu của bạn)
     let score = 0;
-    exam.questions.forEach((question, index) => {
+    let correctAnswers = 0;
+    let userAnswers = []; // Mảng để lưu câu trả lời của người dùng
+    checkQuestion.questions.forEach((question, index) => {
         const userAnswerIndex = answers[`question-${index}`];
-        if (question.answerOptions[userAnswerIndex].isCorrectAnswer) {
-            score++;
+        if (userAnswerIndex !== undefined && question.answerOptions[userAnswerIndex] && question.answerOptions[userAnswerIndex].isCorrectAnswer) {
+            score += 10 / checkQuestion.questions.length; // Tính toán điểm dựa trên tổng số câu hỏi
+            correctAnswers++;
+            userAnswers.push({ question: question.questionText, answer: question.answerOptions[userAnswerIndex].answerBody }); // Lưu câu trả lời của người dùng
+        } else {
+            userAnswers.push({ question: question.questionText, answer: question.answerOptions[userAnswerIndex] ? question.answerOptions[userAnswerIndex].answerBody : 'Không trả lời' }); // Lưu câu trả lời của người dùng
         }
     });
 
     // Hiển thị kết quả
-    res.render("result", { score: score });
+    res.render("result", { score: score.toFixed(2), correctAnswers: correctAnswers, totalQuestions: checkQuestion.questions.length, exam: checkQuestion, answers: answers, userAnswers: userAnswers }); // Sử dụng toFixed(2) để làm tròn điểm số đến 2 chữ số thập phân
 });
 
 //Result api
 app.get("/result", requireLogin, (req,res) => {
+    if (req.session.loggedIn) {
         res.render("result");
+    } else {
+        res.redirect("/login");
+    }
 });
 
 //Đăng xuất

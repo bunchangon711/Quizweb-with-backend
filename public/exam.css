@@ -1,6 +1,21 @@
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('images/exam_background.jpg');
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    transform: scaleX(-1);
+    z-index: -1; 
+}
+
 body {
     font-family: Arial, sans-serif;
-    background-color: #fff;
     color: #333;
     margin: 0;
     padding: 0;
@@ -38,6 +53,12 @@ body {
     border-radius: 5px;
     text-align: center;
     cursor: pointer;
+}
+
+.grid-item:hover {
+    background-color: #e0e0e0; /* Thay đổi màu nền khi hover */
+    cursor: pointer; /* Thay đổi con trỏ thành con trỏ chỉ */
+    transform: scale(1.1); /* Phóng to grid item khi hover */
 }
 
 #scrollToTop{
@@ -91,29 +112,30 @@ body {
     margin-left: +50px;
 }
 
+input[type="radio"] {
+    width: 20px; /* Tăng kích thước của ô tích chọn */
+    height: 20px; /* Tăng kích thước của ô tích chọn */
+}
+
 .quiz-container h2 {
     margin-top: 20px; 
 }
 
-footer {
-    color: #fff;
-    padding: 5px;
-    text-align: center;
+#submit-btn {
     position: fixed;
     bottom: 0;
-    width: 100%;
-}
-
-#submitBtn {
-    margin-bottom: +10px;
-    scale: 115%;
+    left: 0;
+    right: 0;
+    margin: auto;
+    display: block;
+    scale: 110%;
+    padding: 10px 0;
     background-color: #f00;
     color: #fff;
-    padding: 10px 20px;
-    cursor: pointer;
     border: 1px solid #ccc;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin-bottom: 10px;
 }
 
 @media (max-width: 768px) {
