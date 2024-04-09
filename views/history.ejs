@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lịch sử thi</title>
+    <link rel="stylesheet" href="/home.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>PQUIZ</h1>
+            <nav>
+                <a href="/home" class="nav-item">Danh sách kỳ thi</a>
+                <a href="/history" class="nav-item">Lịch sử thi</a>
+            </nav>
+        </div>
+        <a href="/logout" class="logout-icon">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </header>
+    <h1>Lịch sử thi của <%= username %></h1>
+    <div class="chart-container">
+        <div class="chart-background">
+            <div class="piechart">
+                <canvas id="examChart" data-completed-exams="<%= completedExams.length %>" data-remaining-exams="<%= totalExams - completedExams.length %>"></canvas> 
+            </div>
+            <div class="barchart">
+                <canvas id="scoreChart" data-exam-results="<%= JSON.stringify(examResults) %>"></canvas>
+            </div>
+        </div>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Tên bài thi</th>
+                <th>Số câu trả lời đúng</th>
+                <th>Điểm số</th>
+            </tr>
+        </thead>
+        <tbody style="text-align: center">
+            <% examResults.forEach(result => { %>
+                <tr>
+                    <td><%= result.examName %></td>
+                    <td><%= result.correctAnswers %></td>
+                    <td><%= result.score %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>
+
+<script>
+    const ctx = document.getElementById('examChart').getContext('2d');
+    const completedExams = document.getElementById('examChart').dataset.completedExams;
+    const remainingExams = document.getElementById('examChart').dataset.remainingExams;
+
+    const examChart = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: ['Đã làm', 'Chưa làm'],
+            datasets: [{
+                data: [completedExams, remainingExams],
+                backgroundColor: [
+                    'rgba(75, 192, 192, 0.5)',
+                    'rgba(255, 99, 132, 0.5)'
+                ],
+                borderColor: [
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(255, 99, 132, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Biểu đồ số bài thi đã làm/Tổng số bài thi'
+                }
+            }
+        }
+    });
+
+    const ctxBar = document.getElementById('scoreChart').getContext('2d');
+    const examResults = JSON.parse(document.getElementById('scoreChart').dataset.examResults);
+    const scoreChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: examResults.map(result => result.examName),
+            datasets: [{
+                label: 'Điểm số',
+                data: examResults.map(result => result.score),
+                backgroundColor: 'rgba(75, 192, 192, 0.5)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+</script>

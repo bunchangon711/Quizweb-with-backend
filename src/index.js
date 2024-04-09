@@ -92,8 +92,10 @@ app.get("/home", requireLogin, async (req, res) => {
     res.locals.clearSessionStorage = true;
     if (req.session.loggedIn) {
        try {
-           const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
-           res.render('home', { exams: exams, formatTime: formatTime }); // Truyền dữ liệu vào trang home
+            const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
+            const userdata = await user.findOne({ name: req.session.username }); // Lấy thông tin user
+            const completedExams = userdata.examResults.map(result => result.examName); // Lấy danh sách các bài thi đã hoàn thành
+            res.render("home", { exams: exams, completedExams: completedExams, formatTime: formatTime }); // Truyền dữ liệu vào trang home
        } catch (err) {
            console.error(err);
            res.status(500).send('Server Error');
@@ -113,8 +115,11 @@ app.get("/home", requireLogin, async (req, res) => {
     }
 
     try {
-        const exams = await exam.find(query);
-        res.render('home', { exams: exams, formatTime: formatTime });
+        let exams = await exam.find(query);
+        const userdata = await user.findOne({ name: req.session.username }); // Get user data
+        const completedExams = userdata.examResults.map(result => result.examName); // Get completed exams
+
+        res.render('home', { exams: exams, completedExams: completedExams, formatTime: formatTime });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
@@ -179,13 +184,31 @@ app.post("/submit-exam/:id", requireLogin, async (req, res) => {
     }
 });
 
-//Result api
+//Result API
 app.get("/result", requireLogin, (req,res) => {
     if (req.session.loggedIn) {
         res.render("result");
     } else {
         res.redirect("/login");
     }
+});
+
+//Exam history API
+app.get("/history", requireLogin, async (req, res) => {
+    if (req.session.loggedIn) {
+        try {
+            const userdata = await user.findOne({ name: req.session.username }); // Lấy thông tin user
+            const examResults = userdata.examResults; // Lấy danh sách kết quả bài thi
+            const completedExams = examResults.map(result => result.examName); // Lấy danh sách các bài thi đã hoàn thành
+            const totalExams = await exam.countDocuments({}); // Tính tổng số bài thi
+            res.render("history", { examResults: examResults, username: req.session.username, completedExams: completedExams, totalExams: totalExams }); // Truyền dữ liệu vào trang history
+        } catch (err) {
+            console.error(err);
+            res.status(500).send('Server Error');
+        }
+    } else {
+        res.redirect("/login");
+    }    
 });
 
 //Đăng xuất

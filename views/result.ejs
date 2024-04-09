@@ -35,7 +35,7 @@
                     <p class="<%= option.isCorrectAnswer ? 'correct' : '' %>" style="margin-left: 80px;">
                         <%= option.answerBody %>
                         <% if (userAnswers[index] && userAnswers[index].answer == option.answerBody) { %>
-                            <span class="user-answer <%= option.isCorrectAnswer ? 'correct' : 'incorrect' %>">(Câu trả lời của bạn)</span>
+                            <span class="user-answer <%= option.isCorrectAnswer ? 'correct' : 'incorrect' %>">(Câu trả lời sai)</span>
                         <% } %>
                     </p>
                 <% }); %>
