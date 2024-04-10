@@ -15,7 +15,7 @@ app.use(session({
  secret: 'your_secret_key',
  resave: false,
  saveUninitialized: true,
- cookie: { secure: false } // Set to true if your app is served over HTTPS
+ cookie: { secure: false } // Set to true if app is served over HTTPS
 }));
 
 app.use(express.urlencoded({extended: false}));
@@ -47,6 +47,9 @@ app.get("/", async (req, res) => {
         try {
             const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
             res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+            console.log(exams);
+            console.log("--------------------------------");
+            
         } catch (err) {
             console.error(err);
             res.status(500).send('Server Error');
@@ -59,6 +62,8 @@ app.get("/login", async (req, res) => {
         try {           
             const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
             res.render("home", { exams: exams }); // Truyền dữ liệu vào trang home
+            console.log(exams);
+            console.log("--------------------------------");
         } catch (err) {
             console.error(err);
             res.status(500).send('Server Error');
@@ -95,6 +100,10 @@ app.get("/home", requireLogin, async (req, res) => {
             const exams = await exam.find({}); // Lấy tất cả các bản ghi trong collection exams
             const userdata = await user.findOne({ name: req.session.username }); // Lấy thông tin user
             const completedExams = userdata.examResults.map(result => result.examName); // Lấy danh sách các bài thi đã hoàn thành
+            console.log(exams);
+            console.log(userdata);
+            console.log(completedExams);
+            console.log("--------------------------------");
             res.render("home", { exams: exams, completedExams: completedExams, formatTime: formatTime }); // Truyền dữ liệu vào trang home
        } catch (err) {
            console.error(err);
@@ -128,6 +137,8 @@ app.get("/home", requireLogin, async (req, res) => {
 
 app.get("/start-exam/:id", requireLogin, async (req, res) => {
     const examData = await exam.findById(req.params.id);
+    console.log(examData);
+    console.log("--------------------------------");
     res.render("exam", { exam: examData });
 });
 
@@ -143,6 +154,8 @@ app.get("/exam", requireLogin, (req,res) => {
 app.post("/submit-exam/:id", requireLogin, async (req, res) => {    
     // Lấy dữ liệu từ form
     const answers = req.body;
+    console.log(answers);
+    console.log("--------------------------------");
     // Lấy thông tin bài thi dựa trên ID
     const checkQuestion = await exam.findById(req.params.id);
     // So sánh câu trả lời với câu trả lời đúng
@@ -161,7 +174,7 @@ app.post("/submit-exam/:id", requireLogin, async (req, res) => {
     });
 
     // Tìm kiếm người dùng trong database
-    const foundUser = await user.findOne({ name: req.session.username }); // Giả định bạn đã lưu tên người dùng vào session sau khi đăng nhập
+    const foundUser = await user.findOne({ name: req.session.username }); 
     if (foundUser) {
         // Cập nhật kết quả bài thi cho người dùng
         foundUser.examResults.push({
@@ -201,6 +214,10 @@ app.get("/history", requireLogin, async (req, res) => {
             const examResults = userdata.examResults; // Lấy danh sách kết quả bài thi
             const completedExams = examResults.map(result => result.examName); // Lấy danh sách các bài thi đã hoàn thành
             const totalExams = await exam.countDocuments({}); // Tính tổng số bài thi
+            console.log(userdata);
+            console.log(examResults);
+            console.log(completedExams);
+            console.log("--------------------------------");
             res.render("history", { examResults: examResults, username: req.session.username, completedExams: completedExams, totalExams: totalExams }); // Truyền dữ liệu vào trang history
         } catch (err) {
             console.error(err);
@@ -244,6 +261,7 @@ app.post("/signup", async (req,res) => {
             data.password = hashedPassword;
             const userdata = await user.insertMany(data);
             console.log(userdata);
+            console.log("--------------------------------");
             res.render("login");
         }
     }
@@ -276,4 +294,5 @@ app.post("/login", async (req,res) => {
 const port = 3000;
 app.listen(port, () => {
     console.log(`Server running on Port: ${port}`);
+    console.log("--------------------------------");
 });

@@ -6,7 +6,6 @@ function formatTime(time) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Giả sử bạn đã truyền dữ liệu từ server đến trang như sau:
     const exams = JSON.parse(document.getElementById('examsData').dataset.exams);
 
     exams.forEach(exam => {
