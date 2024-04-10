@@ -1,8 +1,8 @@
 const express = require('express');
 const path = require('path');
 const bcrypt = require('bcrypt');
-const user = require("./logindb");
-const exam = require("./examdb");
+const user = require("../models/logindb");
+const exam = require("../models/examdb");
 
 const app = express();
 //convert data into json format
